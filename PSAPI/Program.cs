@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -67,7 +68,6 @@ namespace PSAPI
                     bFound = true;
                 }
 
-                // Close the process handle
                 CloseHandle(hProcess);
             }
             if (!bFound)
@@ -76,6 +76,38 @@ namespace PSAPI
             }
             return sName;
         }
+
+        public static void GetModules()
+        {
+            Process myProcess = new Process();
+            ProcessStartInfo myProcessStartInfo = new ProcessStartInfo("notepad.exe");
+            myProcess.StartInfo = myProcessStartInfo;
+            myProcess.Start();
+            System.Threading.Thread.Sleep(1000);
+            ProcessModule myProcessModule;
+            ProcessModuleCollection myProcessModuleCollection = myProcess.Modules;
+            Console.WriteLine("Properties of the modules associated with 'notepad' are:");
+
+
+            for (int i = 0; i < myProcessModuleCollection.Count; i++)
+            {
+                myProcessModule = myProcessModuleCollection[i];
+                Console.WriteLine("The moduleName is " + myProcessModule.ModuleName);
+                Console.WriteLine("The " + myProcessModule.ModuleName + "'s File Name is: " + myProcessModule.FileName);
+                Console.WriteLine("The " + myProcessModule.ModuleName + "'s base address is: " + myProcessModule.BaseAddress);
+                Console.WriteLine("For " + myProcessModule.ModuleName + " Entry point address is: " + myProcessModule.EntryPointAddress);
+            }
+            myProcessModule = myProcess.MainModule;
+            Console.WriteLine("The Main Module associated");
+            Console.WriteLine("The process's main modulename is " + myProcessModule.ModuleName);
+            Console.WriteLine("The process's main modulename  File Name is: " + myProcessModule.FileName);
+            Console.WriteLine("The process's main modulename base address is: " + myProcessModule.BaseAddress);
+            Console.WriteLine("The process's main modulename Entry point address is: " + myProcessModule.EntryPointAddress);
+            myProcess.CloseMainWindow();
+        }
+
+
+
         public static void Testy()
         {
             UInt32 arraySize = 9000;
@@ -120,7 +152,7 @@ namespace PSAPI
 
         static void Main(string[] args)
         {
-            Testy();
+            GetModules();
 
             Console.ReadKey();
         }
